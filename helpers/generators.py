@@ -1,0 +1,16 @@
+import random
+import string
+
+def generate_email():
+    return f"user{random.randint(1000, 9999)}@example.com"
+
+def generate_password(length=8):
+    chars = string.ascii_letters + string.digits
+    return ''.join(random.choice(chars) for _ in range(length))
+
+def generate_user_data():
+    return {
+        "email": generate_email(),
+        "password": generate_password(),
+        "name": f"User{random.randint(100, 999)}"
+    }
