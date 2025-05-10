@@ -172,3 +172,25 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# API-тестирование и конфиги
+*.env               # Файлы окружения (например, .env, config.env)
+.env.local          # Локальные настройки
+secrets.ini         # Файлы с секретами
+*.log               # Логи приложений и тестов
+/test-reports/      # Отчёты тестов (например, Allure, JUnit)
+/allure-results/    # Результаты Allure
+*.http              # Файлы запросов (например, для REST Client в VS Code)
+/tmp/               # Временные файлы
+
+# IDE (если используете не только PyCharm)
+.vscode/            # Настройки VS Code
+.idea/workspace.xml # Динамические файлы PyCharm (лучше игнорировать)
+.idea/modules.xml
+
+# Дополнительно для SQLite (если используется)
+*.sqlite            # Резервные копии SQLite
+*.sqlite-shm
+*.sqlite-wal
+
+/allure-report/   # Сгенерированный HTML-отчёт (можно пересоздать)
