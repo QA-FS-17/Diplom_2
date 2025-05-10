@@ -194,3 +194,4 @@ secrets.ini         # Файлы с секретами
 *.sqlite-wal
 
 /allure-report/   # Сгенерированный HTML-отчёт (можно пересоздать)
+/report.html
