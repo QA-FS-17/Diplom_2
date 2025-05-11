@@ -1,0 +1,14 @@
+2025-05-11 05:58:31,181 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-05-11 05:58:31,182 - helpers.api_client - INFO - Request body: {'email': 'noatsign.com', 'password': 'xNBnxEr4&6*i', 'name': 'Nicholas Nolan'}
+2025-05-11 05:58:31,452 - helpers.api_client - INFO - Response status: 500
+2025-05-11 05:58:31,452 - helpers.api_client - INFO - Response body: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Internal Server Error</pre>
+</body>
+</html>
+

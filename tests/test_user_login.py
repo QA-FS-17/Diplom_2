@@ -1,7 +1,7 @@
 # test_user_login.py
 
 import allure
-from helpers.data import HTTP_STATUS, ERROR_MESSAGES
+from helpers.data import HTTP_STATUS
 
 
 @allure.epic("Stellar Burgers API")
@@ -34,7 +34,7 @@ class TestUserLogin:
 
         assert response.status_code == HTTP_STATUS["UNAUTHORIZED"]
         assert response.json()["success"] is False
-        assert response.json()["message"] == ERROR_MESSAGES["LOGIN_FAILED"]
+        assert response.json()["message"] == "email or password are incorrect"
 
     @allure.story("Неверные данные")
     @allure.title("Несуществующий email")

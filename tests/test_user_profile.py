@@ -27,6 +27,7 @@ class TestUserProfile:
 
         with allure.step("Проверяем ответ"):
             assert response.status_code == HTTP_STATUS["OK"], "Неверный статус-код"
+            assert "application/json" in response.headers["Content-Type"], "Неверный Content-Type"
             response_data = response.json()
             assert response_data["success"] is True, "Флаг success должен быть True"
 
@@ -45,10 +46,23 @@ class TestUserProfile:
     @allure.title("Попытка изменения данных без авторизации")
     def test_unauthorized_update(self, api_client):
         """Проверка защиты от неавторизованных изменений"""
-        response = api_client.update_user_info(name="Новое Имя")
+        response = api_client.update_user_info(
+            access_token=None,  # Явно указываем отсутствие токена
+            name="Новое Имя"
+        )
 
-        assert response.status_code == HTTP_STATUS["UNAUTHORIZED"], "Должна быть ошибка 401"
-        assert response.json()["message"] == ERROR_MESSAGES["UNAUTHORIZED"], "Неверное сообщение об ошибке"
+        with allure.step("Проверяем ответ"):
+            assert response.status_code == HTTP_STATUS["UNAUTHORIZED"], (
+                f"Ожидался статус {HTTP_STATUS['UNAUTHORIZED']}, получен {response.status_code}"
+            )
+            assert "application/json" in response.headers["Content-Type"], "Неверный Content-Type"
+            response_data = response.json()
+            assert not response_data["success"], "success должен быть False для неавторизованного запроса"
+            assert response_data["message"] == ERROR_MESSAGES["UNAUTHORIZED"], (
+                f"Ожидалось сообщение '{ERROR_MESSAGES['UNAUTHORIZED']}', "
+                f"получено '{response_data.get('message')}'"
+            )
+            assert "user" not in response_data, "Не должно быть данных пользователя"
 
     @allure.story("Ошибки валидации")
     @allure.title("Попытка задания невалидного email")
@@ -65,10 +79,13 @@ class TestUserProfile:
         )
 
         if response.status_code == HTTP_STATUS["OK"]:
-            pytest.xfail("API принимает невалидные email (ожидается исправление)")
+            # Проверяем, что email действительно изменился (даже если невалидный)
+            assert response.json()["user"]["email"] == invalid_email
+            pytest.xfail("Известная проблема: API не валидирует email при обновлении профиля")
         else:
-            assert response.status_code == HTTP_STATUS["BAD_REQUEST"], "Должна быть ошибка 400"
-            assert "email" in response.json()["message"].lower(), "Сообщение должно указывать на проблему с email"
+            with allure.step("Проверяем ответ об ошибке"):
+                assert response.status_code == HTTP_STATUS["BAD_REQUEST"], "Должна быть ошибка 400"
+                assert "email" in response.json()["message"].lower(), "Сообщение должно указывать на проблему с email"
 
     @allure.story("Конфликтующие данные")
     @allure.title("Попытка задания существующего email")
@@ -79,6 +96,14 @@ class TestUserProfile:
             email=another_registered_user["email"]
         )
 
-        assert response.status_code in [HTTP_STATUS["FORBIDDEN"],
-                                        HTTP_STATUS["CONFLICT"]], "Должна быть ошибка 403 или 409"
-        assert "already exists" in response.json()["message"].lower()
+        with allure.step("Проверяем ответ"):
+            assert response.status_code in [
+                HTTP_STATUS["FORBIDDEN"],
+                HTTP_STATUS["CONFLICT"]
+            ], "Должна быть ошибка 403 или 409"
+            assert "application/json" in response.headers["Content-Type"], "Неверный Content-Type"
+            error_message = response.json()["message"].lower()
+            assert any(phrase in error_message for phrase in [
+                "already exists",
+                "уже существует"
+            ]), f"Сообщение об ошибке должно указывать на существующий email, получено: '{error_message}'"

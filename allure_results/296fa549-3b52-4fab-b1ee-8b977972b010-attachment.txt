@@ -1,0 +1,11 @@
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_d257ff51@test.com', 'password': 'Password_d257ff51', 'name': 'User_d257ff51'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"user":{"email":"user_d257ff51@test.com","name":"User_d257ff51"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MjAxMjNjOWVkMjgwMDAxYjVlMTk4MCIsImlhdCI6MTc0NjkzMjI4NCwiZXhwIjoxNzQ2OTMzNDg0fQ.yAPta30b_RZPZsQ8n1rVi02sYcPg3wVqg-1QzJTZi1Y","refreshToken":"fbfb251c10e1952a48159c11b70e7e77ee6a39f7c3a6c663219a825d706b5ccf9f8b56e5541af703"}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/orders
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'ingredients': []}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 400
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":false,"message":"Ingredient ids must be provided"}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 202
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"message":"User successfully removed"}

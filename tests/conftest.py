@@ -3,6 +3,8 @@
 import pytest
 from helpers.api_client import StellarBurgersApi
 import uuid
+import os
+import shutil
 
 
 @pytest.fixture
@@ -66,3 +68,23 @@ def another_registered_user(api_client, generate_unique_user_data):
     # Удаление пользователя после теста
     delete_response = api_client.delete_user(user_data["access_token"])
     assert delete_response.status_code == 202, "Не удалось удалить второго пользователя"
+
+def pytest_runtest_makereport(item, call):
+    if "xfail" in item.keywords:
+        if call.excinfo and issubclass(call.excinfo.type, AssertionError):
+            # Добавляем метку для Allure
+            item.add_marker(pytest.mark.allure_label("AS_ID", "expected_failure"))
+
+
+def pytest_configure(config):
+    # Получаем корневую директорию проекта
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    allure_dir = os.path.join(root_dir, "allure_results")
+
+    # Очистка и создание директории
+    if os.path.exists(allure_dir):
+        shutil.rmtree(allure_dir)
+    os.makedirs(allure_dir, exist_ok=True)
+
+    # Устанавливаем путь для отчетов
+    config.option.allure_report_dir = allure_dir

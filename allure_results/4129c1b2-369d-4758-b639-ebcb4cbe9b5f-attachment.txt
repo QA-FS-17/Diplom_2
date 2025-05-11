@@ -1,0 +1,10 @@
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_a3c8a519@test.com', 'password': 'Password_a3c8a519', 'name': 'User_a3c8a519'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"user":{"email":"user_a3c8a519@test.com","name":"User_a3c8a519"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MjAxMjRjOWVkMjgwMDAxYjVlMTk5NyIsImlhdCI6MTc0NjkzMjMwMCwiZXhwIjoxNzQ2OTMzNTAwfQ.ZtsBQ4dFGa08o8WskEFTS6iIm0F5CS9jW_eU3ArkUqY","refreshToken":"4bc3e0e97533b3be01980d12f1cfad86007568d9096a9f86bdff63155e5178b297150c979479c3c8"}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: GET https://stellarburgers.nomoreparties.site/api/orders
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"orders":[],"total":222615,"totalToday":324}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 202
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"message":"User successfully removed"}

@@ -1,0 +1,4 @@
+2025-05-11 05:58:31,967 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-05-11 05:58:31,967 - helpers.api_client - INFO - Request body: {'email': 'achang@example.org', 'password': 'abc', 'name': 'Jorge Sullivan'}
+2025-05-11 05:58:32,141 - helpers.api_client - INFO - Response status: 403
+2025-05-11 05:58:32,142 - helpers.api_client - INFO - Response body: {"success":false,"message":"User already exists"}

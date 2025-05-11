@@ -1,0 +1,10 @@
+2025-05-11 05:58:38,238 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-05-11 05:58:38,239 - helpers.api_client - INFO - Request body: {'email': 'user_d0b17970@test.com', 'password': 'Password_d0b17970', 'name': 'User_d0b17970'}
+2025-05-11 05:58:38,514 - helpers.api_client - INFO - Response status: 200
+2025-05-11 05:58:38,515 - helpers.api_client - INFO - Response body: {"success":true,"user":{"email":"user_d0b17970@test.com","name":"User_d0b17970"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MjAxMjRlOWVkMjgwMDAxYjVlMTk5OSIsImlhdCI6MTc0NjkzMjMwMiwiZXhwIjoxNzQ2OTMzNTAyfQ.D0aEG4io5nuMuds3-_6ia7FDY1l1jlvF-S4QSh1HnwI","refreshToken":"93cd07117d1e74539c532d3a8f87db980fa4d25c4b19fd1b5919eacbbd5422ef535d5483e2a6ac23"}
+2025-05-11 05:58:38,517 - helpers.api_client - INFO - Request: GET https://stellarburgers.nomoreparties.site/api/orders
+2025-05-11 05:58:39,156 - helpers.api_client - INFO - Response status: 200
+2025-05-11 05:58:39,156 - helpers.api_client - INFO - Response body: {"success":true,"orders":[],"total":222615,"totalToday":324}
+2025-05-11 05:58:39,160 - helpers.api_client - INFO - Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+2025-05-11 05:58:39,872 - helpers.api_client - INFO - Response status: 202
+2025-05-11 05:58:39,873 - helpers.api_client - INFO - Response body: {"success":true,"message":"User successfully removed"}

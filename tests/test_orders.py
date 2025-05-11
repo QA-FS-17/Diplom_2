@@ -69,24 +69,22 @@ class TestOrderCreation:
     @allure.story("Неавторизованный пользователь")
     @allure.title("Попытка создания заказа без токена")
     def test_unauthorized_access(self, api_client, get_valid_ingredients):
-        response = api_client.create_order(
-            ingredients=[get_valid_ingredients["bun"]]
-        )
+        """Проверка, что неавторизованные пользователи не могут создавать заказы"""
+        with allure.step("Отправка запроса без токена"):
+            response = api_client.create_order(
+                ingredients=[get_valid_ingredients["bun"]]
+            )
 
-        # Для проекта просто проверяем, что ответ успешный (200)
-        # Но добавляем примечание о расхождении с документацией
-        assert response.status_code == HTTP_STATUS["OK"], (
-            "API должен требовать авторизацию (401), но фактически позволяет "
-            "создавать заказы без токена. Это расхождение с документацией. "
-            f"Получен статус: {response.status_code}"
-        )
-
-        # Добавляем информацию в allure-отчет
-        allure.dynamic.description(
-            "Внимание: API позволяет создавать заказы без авторизации. "
-            "По документации должен возвращаться статус 401 Unauthorized. "
-            "Фактически возвращается 200 OK."
-        )
+        with allure.step("Проверка статуса ответа"):
+            if response.status_code != HTTP_STATUS["UNAUTHORIZED"]:
+                allure.dynamic.tag("expected_failure")
+                allure.dynamic.description(f"""
+                ### Ожидаемое поведение:
+                API должно возвращать 401 для неавторизованных запросов
+                ### Фактический результат:
+                Получен статус {response.status_code}
+                """)
+                pytest.xfail(f"Ожидался 401, получен {response.status_code}")
 
     @allure.story("Невалидные данные")
     @allure.title("Создание заказа с несуществующими ингредиентами")

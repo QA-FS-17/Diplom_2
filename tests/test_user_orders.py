@@ -33,10 +33,17 @@ class TestUserOrders:
     @allure.title("Попытка доступа без авторизации")
     def test_unauthorized_access(self, api_client):
         """Проверка обработки неавторизованного доступа"""
-        response = api_client.get_user_orders()
+        response = api_client.get_user_orders()  # Не передаем токен вообще
 
-        assert response.status_code == HTTP_STATUS["UNAUTHORIZED"], "Неверный статус-код"
-        assert response.json()["message"] == ERROR_MESSAGES["UNAUTHORIZED"], "Неверное сообщение об ошибке"
+        assert response.status_code == HTTP_STATUS["UNAUTHORIZED"], (
+            f"Ожидался статус {HTTP_STATUS['UNAUTHORIZED']}, получен {response.status_code}"
+        )
+        response_data = response.json()
+        assert not response_data["success"], "success должен быть False для неавторизованного запроса"
+        assert response_data["message"] == ERROR_MESSAGES["UNAUTHORIZED"], (
+            f"Ожидалось сообщение '{ERROR_MESSAGES['UNAUTHORIZED']}', "
+            f"получено '{response_data.get('message')}'"
+        )
 
     @allure.story("Граничные случаи")
     @allure.title("Проверка пустого списка заказов")

@@ -4,8 +4,7 @@
 # Установка зависимостей
 pip install -r requirements.txt
 
-# Запуск тестов с генерацией Allure-отчета
-pytest --alluredir=allure-results
+# Запуск тестов с генерацией и просмотром Allure-отчета
+./run_tests.sh
 
-# Просмотр отчета
-allure serve allure-results
+

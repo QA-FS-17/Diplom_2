@@ -7,11 +7,11 @@ from typing import Optional, Dict, Any
 
 BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
 
-# Настройка логгера один раз при загрузке модуля
+# Настройка логгера
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-if not logger.handlers:  # Чтобы не добавлять обработчики повторно
+if not logger.handlers:
     handler = logging.StreamHandler()
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter(
@@ -47,7 +47,7 @@ class StellarBurgersApi:
         return response
 
     # User methods
-    def create_user(self, email, password, name):
+    def create_user(self, email: str, password: str, name: str) -> requests.Response:
         endpoint = "auth/register"
         payload = {
             "email": email,
@@ -56,7 +56,7 @@ class StellarBurgersApi:
         }
         return self._request("POST", endpoint, json=payload)
 
-    def login_user(self, email, password):
+    def login_user(self, email: str, password: str) -> requests.Response:
         endpoint = "auth/login"
         payload = {
             "email": email,
@@ -64,7 +64,7 @@ class StellarBurgersApi:
         }
         return self._request("POST", endpoint, json=payload)
 
-    def delete_user(self, access_token):
+    def delete_user(self, access_token: str) -> requests.Response:
         if not access_token:
             raise ValueError("Access token is required")
         endpoint = "auth/user"
@@ -72,27 +72,29 @@ class StellarBurgersApi:
         return self._request("DELETE", endpoint, headers=headers)
 
     # Order methods
-    def create_order(self, ingredients, access_token=None):
+    def create_order(self, ingredients: list, access_token: Optional[str] = None) -> requests.Response:
         endpoint = "orders"
-        headers = {"Content-Type": "application/json"}
+        headers = {}
         if access_token:
             headers["Authorization"] = access_token
 
         payload = {"ingredients": ingredients}
         return self._request("POST", endpoint, json=payload, headers=headers)
 
-    def get_user_orders(self, access_token):
-        if not access_token:
-            raise ValueError("Access token is required")
-        headers = {"Authorization": access_token}
-        return self._request("GET", "orders", headers=headers)
+    def get_user_orders(self, access_token: Optional[str] = None) -> requests.Response:
+        endpoint = "orders"
+        headers = {}
+        if access_token:
+            headers["Authorization"] = access_token
+
+        return self._request("GET", endpoint, headers=headers)
 
     # Profile methods
-    def update_user_info(self, access_token, email=None, password=None, name=None):
-        if not access_token:
-            raise ValueError("Access token is required")
+    def update_user_info(self, access_token=None, email=None, password=None, name=None):
+        headers = {}
+        if access_token:
+            headers["Authorization"] = access_token
 
-        headers = {"Authorization": access_token}
         payload = {}
         if email:
             payload["email"] = email
@@ -100,14 +102,15 @@ class StellarBurgersApi:
             payload["password"] = password
         if name:
             payload["name"] = name
+
         return self._request("PATCH", "auth/user", json=payload, headers=headers)
 
-    def get_user_info(self, access_token):
+    def get_user_info(self, access_token: str) -> requests.Response:
         if not access_token:
             raise ValueError("Access token is required")
         endpoint = "auth/user"
         headers = {"Authorization": access_token}
         return self._request("GET", endpoint, headers=headers)
 
-    def get_ingredients(self):
+    def get_ingredients(self) -> requests.Response:
         return self._request("GET", "ingredients")
