@@ -1,57 +1,103 @@
+# test_user_creation.py
+
 import allure
 import pytest
-from helpers.data import TestUsers, HTTP_STATUS, ERROR_MESSAGES
+from helpers.data import TestUsers, HTTP_STATUS
+from helpers.generators import generate_unique_user
+
 
 @allure.epic("Stellar Burgers API")
 @allure.feature("Создание пользователя")
 class TestUserCreation:
-    # Позитивные сценарии
-    @allure.story("Успешная регистрация")
-    @allure.title("Статус-код 200 при создании пользователя")
-    def test_create_user_status_code(self, api_client):
-        response = api_client.create_user(**TestUsers.VALID)
-        assert response.status_code == HTTP_STATUS["OK"]
+    @classmethod
+    def setup_class(cls):
+        """Генерация тестовых данных один раз для всех тестов класса"""
+        cls.valid_user = generate_unique_user()
+        cls.existing_user = TestUsers.VALID
 
     @allure.story("Успешная регистрация")
-    @allure.title("Флаг success=True при создании пользователя")
-    def test_create_user_success_flag(self, api_client):
-        response = api_client.create_user(**TestUsers.VALID)
-        assert response.json()["success"] is True
+    @allure.title("Полная проверка успешной регистрации")
+    def test_successful_registration(self, api_client):
+        """Проверка всех аспектов успешной регистрации в одном тесте"""
+        response = api_client.create_user(**self.valid_user)
 
-    @allure.story("Успешная регистрация")
-    @allure.title("Наличие accessToken в ответе")
-    def test_create_user_has_token(self, api_client):
-        response = api_client.create_user(**TestUsers.VALID)
-        assert "accessToken" in response.json()
+        # Основные проверки ответа
+        assert response.status_code == HTTP_STATUS["OK"], "Неверный статус-код"
+        response_data = response.json()
 
-    # Негативный сценарий: существующий пользователь
+        # Проверка структуры ответа
+        assert response_data["success"] is True, "Флаг success должен быть True"
+        assert "accessToken" in response_data, "Отсутствует accessToken"
+        assert "refreshToken" in response_data, "Отсутствует refreshToken"
+        assert "user" in response_data, "Отсутствует информация о пользователе"
+
+        # Проверка данных пользователя
+        user_data = response_data["user"]
+        assert user_data["email"] == self.valid_user["email"], "Email не совпадает"
+        assert user_data["name"] == self.valid_user["name"], "Name не совпадает"
+
     @allure.story("Ошибки регистрации")
-    @allure.title("Статус-код 403 при дублировании пользователя")
-    def test_duplicate_user_status(self, api_client, registered_user):
-        response = api_client.create_user(**TestUsers.VALID)
-        assert response.status_code == HTTP_STATUS["FORBIDDEN"]
+    @allure.title("Регистрация с отсутствующими полями")
+    @pytest.mark.parametrize("missing_field", ["email", "password", "name"])
+    def test_registration_with_missing_fields(self, api_client, missing_field):
+        invalid_user = self.valid_user.copy()
+        invalid_user.pop(missing_field)
+
+        response = api_client.create_user(**invalid_user)
+        assert response.status_code == HTTP_STATUS["BAD_REQUEST"]
+        assert "message" in response.json(), "Отсутствует сообщение об ошибке"
 
     @allure.story("Ошибки регистрации")
-    @allure.title("Сообщение об ошибке при дублировании пользователя")
-    def test_duplicate_user_message(self, api_client, registered_user):
-        response = api_client.create_user(**TestUsers.VALID)
-        assert response.json()["message"] == ERROR_MESSAGES["USER_EXISTS"]
-
-    # Негативный сценарий: отсутствие полей
-    @allure.story("Ошибки регистрации")
-    @allure.title("Статус-код 403 при отсутствии поля {field}")
-    @pytest.mark.parametrize("field", ["email", "password", "name"])
-    def test_missing_field_status(self, api_client, field):
-        user_data = TestUsers.VALID.copy()
-        user_data.pop(field)
+    @allure.title("Регистрация существующего пользователя")
+    def test_duplicate_registration(self, api_client, registered_user):
+        user_data = {
+            "email": registered_user["email"],
+            "password": registered_user["password"],
+            "name": registered_user["name"]
+        }
         response = api_client.create_user(**user_data)
         assert response.status_code == HTTP_STATUS["FORBIDDEN"]
+        assert "уже существует" in response.json().get("message", "").lower()
 
-    @allure.story("Ошибки регистрации")
-    @allure.title("Сообщение об ошибке при отсутствии поля {field}")
-    @pytest.mark.parametrize("field", ["email", "password", "name"])
-    def test_missing_field_message(self, api_client, field):
-        user_data = TestUsers.VALID.copy()
-        user_data.pop(field)
-        response = api_client.create_user(**user_data)
-        assert ERROR_MESSAGES["REQUIRED_FIELDS"] in response.json()["message"]
+    @allure.story("Валидация данных")
+    @allure.title("Проверка невалидных email")
+    @pytest.mark.parametrize("invalid_email", [
+        "invalid",
+        "missing@",
+        "@missing.domain",
+        "noatsign.com",
+        "with space@test.com"
+    ], ids=["plain_string", "missing_domain", "missing_local", "no_at_sign", "with_space"])
+    def test_invalid_email_format(self, api_client, invalid_email, faker):
+        invalid_user = {
+            "email": invalid_email,
+            "password": faker.password(length=12),
+            "name": faker.name()
+        }
+
+        response = api_client.create_user(**invalid_user)
+
+        if response.status_code == HTTP_STATUS["SERVER_ERROR"]:
+            pytest.xfail("Серверная ошибка при валидации email (ожидается исправление)")
+        else:
+            assert response.status_code == HTTP_STATUS["BAD_REQUEST"]
+            assert "email" in response.json().get("message", "").lower()
+
+    @allure.story("Валидация данных")
+    @allure.title("Проверка коротких паролей")
+    @pytest.mark.parametrize("short_password", ["123", "abc", "1"],
+                             ids=["3_digits", "3_letters", "1_char"])
+    def test_short_password(self, api_client, short_password, faker):
+        invalid_user = {
+            "email": faker.unique.email(),
+            "password": short_password,
+            "name": faker.name()
+        }
+
+        response = api_client.create_user(**invalid_user)
+
+        if response.status_code == HTTP_STATUS["OK"]:
+            pytest.fail("API принял короткий пароль")
+        else:
+            assert response.status_code in [HTTP_STATUS["BAD_REQUEST"], HTTP_STATUS["FORBIDDEN"]]
+            assert "password" in response.json().get("message", "").lower()

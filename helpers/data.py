@@ -1,3 +1,5 @@
+# data.py
+
 # Конфигурация API
 BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
 
@@ -78,6 +80,7 @@ class TestUsers:
 
 # Данные для заказов
 class OrderData:
-    VALID = [INGREDIENTS["BUN"], INGREDIENTS["SAUCE"]]
-    INVALID = [INGREDIENTS["INVALID"]]
+    # Используем реальные ID из API
+    VALID = ["60d3b41abdacab0026a733c6", "609646e4dc916e00276b2870"]  # Пример валидных ID
+    INVALID = ["invalid_hash_12345"]
     EMPTY = []
