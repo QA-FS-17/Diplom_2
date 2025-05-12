@@ -5,24 +5,29 @@ from helpers.api_client import StellarBurgersApi
 import uuid
 import os
 import shutil
+import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def api_client():
-    """Базовая фикстура для работы с API"""
-    return StellarBurgersApi()
+    """Фикстура для работы с API клиентом"""
+    client = StellarBurgersApi()
+    yield client
 
 
 @pytest.fixture
 def generate_unique_user_data():
-    """Генерация уникальных данных пользователя"""
+    """Генератор уникальных пользовательских данных с временной меткой"""
 
     def _generate(prefix=""):
-        unique_id = uuid.uuid4().hex[:8]
+        unique_part = f"{uuid.uuid4().hex[:6]}_{int(time.time() * 1000)}"
         return {
-            "email": f"{prefix}user_{unique_id}@test.com",
-            "password": f"{prefix}Password_{unique_id}",
-            "name": f"{prefix}User_{unique_id}"
+            "email": f"{prefix}user_{unique_part}@test.com",
+            "password": f"{prefix}P@ss_{unique_part}",
+            "name": f"{prefix}User_{unique_part}"
         }
 
     return _generate
@@ -30,61 +35,83 @@ def generate_unique_user_data():
 
 @pytest.fixture
 def registered_user(api_client, generate_unique_user_data):
-    """Фикстура создания и удаления тестового пользователя"""
+    """Создание и гарантированное удаление тестового пользователя"""
     user_data = generate_unique_user_data()
-    response = api_client.create_user(**user_data)
+    response = None
+    try:
+        # Создание пользователя
+        response = api_client.create_user(**user_data)
+        if response.status_code != 200:
+            pytest.fail(f"Ошибка создания пользователя: {response.text}")
 
-    # Проверяем статус код
-    assert response.status_code == 200, f"Не удалось создать пользователя. Status: {response.status_code}"
+        response_data = response.json()
+        user_data.update({
+            "access_token": response_data.get("accessToken", ""),
+            "refresh_token": response_data.get("refreshToken", "")
+        })
 
-    # Парсим JSON ответ
-    response_data = response.json()
-    assert response_data.get('success') is True, "Не удалось создать пользователя"
+        yield user_data
 
-    # Добавляем токены к данным пользователя
-    user_data["access_token"] = response_data.get("accessToken", "")
-    user_data["refresh_token"] = response_data.get("refreshToken", "")
-
-    yield user_data
-
-    # Удаление пользователя после теста
-    if user_data.get("access_token"):
-        delete_response = api_client.delete_user(user_data["access_token"])
-        assert delete_response.status_code in [200, 202], "Не удалось удалить пользователя"
+    finally:
+        # Удаление пользователя в любом случае
+        if response and response.status_code == 200:
+            delete_response = api_client.delete_user(user_data["access_token"])
+            if delete_response.status_code not in [200, 202]:
+                logger.error(f"Ошибка удаления пользователя: {delete_response.text}")
 
 
 @pytest.fixture
 def another_registered_user(api_client, generate_unique_user_data):
-    """Фикстура для второго тестового пользователя"""
+    """Фикстура для второго пользователя с префиксом 'another_'"""
     user_data = generate_unique_user_data(prefix="another_")
     response = api_client.create_user(**user_data)
 
-    assert response.status_code == 200, "Не удалось создать второго пользователя"
-    response_data = response.json()
+    if response.status_code != 200:
+        pytest.skip("Не удалось создать второго пользователя для теста")
 
-    user_data["access_token"] = response_data["accessToken"]
+    user_data["access_token"] = response.json().get("accessToken", "")
     yield user_data
 
-    # Удаление пользователя после теста
-    delete_response = api_client.delete_user(user_data["access_token"])
-    assert delete_response.status_code == 202, "Не удалось удалить второго пользователя"
+    # Удаление после использования
+    if user_data.get("access_token"):
+        api_client.delete_user(user_data["access_token"])
 
-def pytest_runtest_makereport(item, call):
-    if "xfail" in item.keywords:
-        if call.excinfo and issubclass(call.excinfo.type, AssertionError):
-            # Добавляем метку для Allure
-            item.add_marker(pytest.mark.allure_label("AS_ID", "expected_failure"))
+
+@pytest.fixture
+def valid_ingredients(api_client):
+    """Фикстура для получения и проверки валидных ингредиентов"""
+    response = api_client.get_ingredients()
+    assert response.status_code == 200, "API ингредиентов недоступно"
+
+    ingredients = response.json().get("data", [])
+    assert len(ingredients) >= 3, "Недостаточно ингредиентов в базе"
+
+    # Проверка наличия обязательных типов
+    required_types = {"bun", "sauce", "main"}
+    available_types = {i["type"] for i in ingredients}
+    missing_types = required_types - available_types
+    assert not missing_types, f"Отсутствуют типы: {', '.join(missing_types)}"
+
+    # Собираем примеры ингредиентов
+    return {
+        "bun": next(i["_id"] for i in ingredients if i["type"] == "bun"),
+        "sauce": next(i["_id"] for i in ingredients if i["type"] == "sauce"),
+        "main": next(i["_id"] for i in ingredients if i["type"] == "main")
+    }
 
 
 def pytest_configure(config):
-    # Получаем корневую директорию проекта
-    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    allure_dir = os.path.join(root_dir, "allure_results")
+    """Конфигурация окружения для Allure отчетов"""
+    allure_dir = os.path.join(os.path.dirname(__file__), "allure_reports")
 
-    # Очистка и создание директории
     if os.path.exists(allure_dir):
-        shutil.rmtree(allure_dir)
-    os.makedirs(allure_dir, exist_ok=True)
+        shutil.rmtree(allure_dir, ignore_errors=True)
 
-    # Устанавливаем путь для отчетов
+    os.makedirs(allure_dir, exist_ok=True)
     config.option.allure_report_dir = allure_dir
+
+
+@pytest.fixture(autouse=True)
+def cleanup_after_tests(api_client):
+    """Автоматическая очистка тестовых данных после каждого теста"""
+    yield

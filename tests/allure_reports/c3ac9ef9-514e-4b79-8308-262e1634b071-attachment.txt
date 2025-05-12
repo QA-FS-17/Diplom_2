@@ -1,0 +1,11 @@
+2025-05-12 17:39:45,536 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-05-12 17:39:45,536 - helpers.api_client - INFO - Request body: {'email': 'user_e9d0ca_1747060785536@test.com', 'password': 'P@ss_e9d0ca_1747060785536', 'name': 'User_e9d0ca_1747060785536'}
+2025-05-12 17:39:45,776 - helpers.api_client - INFO - Response status: 200
+2025-05-12 17:39:45,776 - helpers.api_client - INFO - Response body: {"success":true,"user":{"email":"user_e9d0ca_1747060785536@test.com","name":"User_e9d0ca_1747060785536"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MjIwODFmOWVkMjgwMDAxYjVlNGM0MCIsImlhdCI6MTc0NzA2MDc2NywiZXhwIjoxNzQ3MDYxOTY3fQ.1YXZNQ0lUg1A9XdX2lWO2xE2FLyr-LRqJRJkHteqmuo","refreshToken":"0638b5a460b853368ecb169431db9e6ffa6d109c46098157bd81cc5e5078384be1a09083ee6e09ee"}
+2025-05-12 17:39:45,779 - helpers.api_client - INFO - Request: PATCH https://stellarburgers.nomoreparties.site/api/auth/user
+2025-05-12 17:39:45,779 - helpers.api_client - INFO - Request body: {'email': 'missing@domain'}
+2025-05-12 17:39:45,944 - helpers.api_client - INFO - Response status: 200
+2025-05-12 17:39:45,945 - helpers.api_client - INFO - Response body: {"success":true,"user":{"email":"missing@domain","name":"User_e9d0ca_1747060785536"}}
+2025-05-12 17:39:45,957 - helpers.api_client - INFO - Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+2025-05-12 17:39:46,632 - helpers.api_client - INFO - Response status: 202
+2025-05-12 17:39:46,632 - helpers.api_client - INFO - Response body: {"success":true,"message":"User successfully removed"}

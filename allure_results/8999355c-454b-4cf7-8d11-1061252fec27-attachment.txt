@@ -1,0 +1,13 @@
+INFO     helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+INFO     helpers.api_client:api_client.py:40 Request body: {'email': 'missing@', 'password': 'xNBnxEr4&6*i', 'name': 'Nicholas Nolan'}
+INFO     helpers.api_client:api_client.py:44 Response status: 500
+INFO     helpers.api_client:api_client.py:45 Response body: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Internal Server Error</pre>
+</body>
+</html>

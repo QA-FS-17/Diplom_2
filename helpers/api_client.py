@@ -47,13 +47,15 @@ class StellarBurgersApi:
         return response
 
     # User methods
-    def create_user(self, email: str, password: str, name: str) -> requests.Response:
+    def create_user(self, email: str = None, password: str = None, name: str = None) -> requests.Response:
         endpoint = "auth/register"
-        payload = {
-            "email": email,
-            "password": password,
-            "name": name
-        }
+        payload = {}
+        if email is not None:
+            payload["email"] = email
+        if password is not None:
+            payload["password"] = password
+        if name is not None:
+            payload["name"] = name
         return self._request("POST", endpoint, json=payload)
 
     def login_user(self, email: str, password: str) -> requests.Response:
