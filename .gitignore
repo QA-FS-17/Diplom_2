@@ -28,3 +28,6 @@ htmlcov/
 *.env
 .env.local
 secrets.ini
+
+# pytest config
+pytest.ini
