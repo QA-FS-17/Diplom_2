@@ -79,13 +79,19 @@ class TestUserProfile:
         )
 
         if response.status_code == HTTP_STATUS["OK"]:
-            # Проверяем, что email действительно изменился (даже если невалидный)
+            # Если API принял невалидный email - отмечаем как баг
             assert response.json()["user"]["email"] == invalid_email
-            pytest.xfail("Известная проблема: API не валидирует email при обновлении профиля")
+            pytest.xfail("Известная проблема: API принимает невалидные email")
+        elif response.status_code == HTTP_STATUS["FORBIDDEN"]:
+            # Основной ожидаемый случай согласно документации
+            error_message = response.json().get("message", "")
+            assert "email" in error_message.lower() or "already exists" in error_message.lower(), (
+                f"Ошибка должна быть связана с email. Получено: {error_message}"
+            )
         else:
-            with allure.step("Проверяем ответ об ошибке"):
-                assert response.status_code == HTTP_STATUS["BAD_REQUEST"], "Должна быть ошибка 400"
-                assert "email" in response.json()["message"].lower(), "Сообщение должно указывать на проблему с email"
+            # Другие коды ошибок считаются неожиданными
+            pytest.fail(f"Неожиданный код ответа: {response.status_code}. "
+                        f"Ожидалось 403 Forbidden или 200 OK. Тело ответа: {response.text}")
 
     @allure.story("Конфликтующие данные")
     @allure.title("Попытка задания существующего email")

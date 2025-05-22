@@ -8,5 +8,3 @@ pip install -r requirements.txt
 
 pytest --alluredir=allure_results
 allure serve allure_results
-
-
