@@ -1,0 +1,21 @@
+2025-05-30 01:14:20,738 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-05-30 01:14:20,738 - helpers.api_client - INFO - Request body: {'email': 'user_bca0492b@test.com', 'password': 'Password_bca0492b', 'name': 'User_bca0492b'}
+2025-05-30 01:14:21,020 - helpers.api_client - INFO - Response status: 200
+2025-05-30 01:14:21,020 - helpers.api_client - INFO - Response body: {"success":true,"user":{"email":"user_bca0492b@test.com","name":"User_bca0492b"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzhkYzM1OWVkMjgwMDAxYjYwMjdkZiIsImlhdCI6MTc0ODU1Njg1MywiZXhwIjoxNzQ4NTU4MDUzfQ.lJaIOamP-X5eZE270tHLgMzfiUAHqDfTBY1XOIZDHJA","refreshToken":"a922daf8cff1d453270b1b895d63df8f5678ef46e21af738b7bad9a59cc56af1666ff144c7177ee9"}
+2025-05-30 01:14:21,022 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/orders
+2025-05-30 01:14:21,022 - helpers.api_client - INFO - Request body: {'ingredients': ['invalid_1', 'invalid_2']}
+2025-05-30 01:14:21,192 - helpers.api_client - INFO - Response status: 500
+2025-05-30 01:14:21,192 - helpers.api_client - INFO - Response body: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Internal Server Error</pre>
+</body>
+</html>
+
+2025-05-30 01:14:21,195 - helpers.api_client - INFO - Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+2025-05-30 01:14:21,981 - helpers.api_client - INFO - Response status: 202
+2025-05-30 01:14:21,982 - helpers.api_client - INFO - Response body: {"success":true,"message":"User successfully removed"}

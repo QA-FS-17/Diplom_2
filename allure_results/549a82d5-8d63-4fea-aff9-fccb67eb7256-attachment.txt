@@ -1,0 +1,20 @@
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_bca0492b@test.com', 'password': 'Password_bca0492b', 'name': 'User_bca0492b'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"user":{"email":"user_bca0492b@test.com","name":"User_bca0492b"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzhkYzM1OWVkMjgwMDAxYjYwMjdkZiIsImlhdCI6MTc0ODU1Njg1MywiZXhwIjoxNzQ4NTU4MDUzfQ.lJaIOamP-X5eZE270tHLgMzfiUAHqDfTBY1XOIZDHJA","refreshToken":"a922daf8cff1d453270b1b895d63df8f5678ef46e21af738b7bad9a59cc56af1666ff144c7177ee9"}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/orders
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'ingredients': ['invalid_1', 'invalid_2']}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 500
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Internal Server Error</pre>
+</body>
+</html>
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 202
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"message":"User successfully removed"}

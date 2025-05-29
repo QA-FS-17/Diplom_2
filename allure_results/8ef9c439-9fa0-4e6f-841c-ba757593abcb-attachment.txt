@@ -1,0 +1,11 @@
+2025-05-30 01:14:41,832 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-05-30 01:14:41,833 - helpers.api_client - INFO - Request body: {'email': 'user_db962e93@test.com', 'password': 'Password_db962e93', 'name': 'User_db962e93'}
+2025-05-30 01:14:42,155 - helpers.api_client - INFO - Response status: 200
+2025-05-30 01:14:42,155 - helpers.api_client - INFO - Response body: {"success":true,"user":{"email":"user_db962e93@test.com","name":"User_db962e93"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzhkYzRhOWVkMjgwMDAxYjYwMjgwYiIsImlhdCI6MTc0ODU1Njg3NCwiZXhwIjoxNzQ4NTU4MDc0fQ.KfrLXE2eiX6Iw7b9kx6_O5rJZyS01fzxb_2T1kuWneQ","refreshToken":"52de2148f10f226c544e9d4bde15af6b69eb4e315d7dbdc4834560ff2b716271694e68e64d75b501"}
+2025-05-30 01:14:42,157 - helpers.api_client - INFO - Request: PATCH https://stellarburgers.nomoreparties.site/api/auth/user
+2025-05-30 01:14:42,157 - helpers.api_client - INFO - Request body: {'email': 'invalid-email'}
+2025-05-30 01:14:42,325 - helpers.api_client - INFO - Response status: 403
+2025-05-30 01:14:42,325 - helpers.api_client - INFO - Response body: {"success":false,"message":"User with such email already exists"}
+2025-05-30 01:14:42,328 - helpers.api_client - INFO - Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+2025-05-30 01:14:43,077 - helpers.api_client - INFO - Response status: 202
+2025-05-30 01:14:43,077 - helpers.api_client - INFO - Response body: {"success":true,"message":"User successfully removed"}
