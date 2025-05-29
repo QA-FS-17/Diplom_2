@@ -1,4 +1,0 @@
-[32mINFO    [0m helpers.api_client:api_client.py:38 Request: PATCH https://stellarburgers.nomoreparties.site/api/auth/user
-[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'name': 'Новое Имя'}
-[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 401
-[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":false,"message":"You should be authorised"}

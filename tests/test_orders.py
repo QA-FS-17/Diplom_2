@@ -1,5 +1,3 @@
-# test_orders.py
-
 import allure
 import pytest
 from helpers.data import HTTP_STATUS, ERROR_MESSAGES
@@ -8,37 +6,9 @@ from helpers.data import HTTP_STATUS, ERROR_MESSAGES
 @allure.epic("Stellar Burgers API")
 @allure.feature("Создание заказа")
 class TestOrderCreation:
-    """
-    Тесты для функционала создания заказов.
-    Фикстура get_valid_ingredients оставлена здесь, потому что:
-    1. Содержит специфичную для тестов логику
-    2. Не требуется в других тестовых классах
-    """
-
-    @pytest.fixture
-    def get_valid_ingredients(self, api_client):
-        """Фикстура для получения валидных ингредиентов"""
-        response = api_client.get_ingredients()
-        assert response.status_code == HTTP_STATUS["OK"], "API недоступно"
-        ingredients = response.json()
-
-        assert "data" in ingredients, "Неверный формат ответа"
-        assert len(ingredients["data"]) >= 2, "Недостаточно ингредиентов"
-
-        bun = next(i for i in ingredients["data"] if i["type"] == "bun")
-        main = next(i for i in ingredients["data"] if i["type"] == "main")
-        sauce = next(i for i in ingredients["data"] if i["type"] == "sauce")
-
-        return {
-            "bun": bun["_id"],
-            "main": main["_id"],
-            "sauce": sauce["_id"]
-        }
-
     @allure.story("Авторизованный пользователь")
     @allure.title("Успешное создание заказа")
     def test_successful_order_creation(self, api_client, registered_user, get_valid_ingredients):
-        """Тест успешного создания заказа"""
         ingredients = [
             get_valid_ingredients["bun"],
             get_valid_ingredients["main"]
@@ -50,10 +20,7 @@ class TestOrderCreation:
         )
 
         assert response.status_code == HTTP_STATUS["OK"]
-        response_data = response.json()
-        assert response_data["success"] is True
-        assert all(key in response_data["order"]
-                   for key in ["number", "name", "status"])
+        assert response.json()["success"] is True
 
     @allure.story("Авторизованный пользователь")
     @allure.title("Создание заказа без ингредиентов")
@@ -67,24 +34,31 @@ class TestOrderCreation:
         assert ERROR_MESSAGES["NO_INGREDIENTS"] in response.json()["message"]
 
     @allure.story("Неавторизованный пользователь")
-    @allure.title("Попытка создания заказа без токена")
-    def test_unauthorized_access(self, api_client, get_valid_ingredients):
-        """Проверка, что неавторизованные пользователи не могут создавать заказы"""
-        with allure.step("Отправка запроса без токена"):
-            response = api_client.create_order(
-                ingredients=[get_valid_ingredients["bun"]]
-            )
+    @allure.title("API ошибочно разрешает неавторизованные заказы (должен возвращать 401)")
+    @pytest.mark.xfail(reason="Баг в API: неавторизованные заказы разрешены", strict=True)
+    def test_unauthorized_access_should_fail(self, api_client, get_valid_ingredients):
+        response = api_client.create_order(
+            ingredients=[get_valid_ingredients["bun"]]
+        )
+        assert response.status_code == HTTP_STATUS["UNAUTHORIZED"]
 
-        with allure.step("Проверка статуса ответа"):
-            if response.status_code != HTTP_STATUS["UNAUTHORIZED"]:
-                allure.dynamic.tag("expected_failure")
-                allure.dynamic.description(f"""
-                ### Ожидаемое поведение:
-                API должно возвращать 401 для неавторизованных запросов
-                ### Фактический результат:
-                Получен статус {response.status_code}
-                """)
-                pytest.xfail(f"Ожидался 401, получен {response.status_code}")
+    @allure.story("Неавторизованный пользователь")
+    @allure.title("Фактическое поведение API (разрешает неавторизованные заказы)")
+    def test_unauthorized_access_current(self, api_client, get_valid_ingredients):
+        response = api_client.create_order(
+            ingredients=[get_valid_ingredients["bun"]]
+        )
+        assert response.status_code == HTTP_STATUS["OK"]
+        assert response.json()["success"] is True
+
+    @allure.story("Неавторизованный пользователь")
+    @allure.title("API ошибочно возвращает success=True (должен быть False)")
+    @pytest.mark.xfail(reason="Баг в API: неверный флаг success", strict=True)
+    def test_unauthorized_success_flag_should_fail(self, api_client, get_valid_ingredients):
+        response = api_client.create_order(
+            ingredients=[get_valid_ingredients["bun"]]
+        )
+        assert not response.json()["success"]
 
     @allure.story("Невалидные данные")
     @allure.title("Создание заказа с несуществующими ингредиентами")

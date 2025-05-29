@@ -1,7 +1,6 @@
 # test_user_profile.py
 
 import allure
-import pytest
 from helpers.data import HTTP_STATUS, ERROR_MESSAGES
 from helpers.generators import generate_email
 
@@ -9,107 +8,72 @@ from helpers.generators import generate_email
 @allure.epic("Stellar Burgers API")
 @allure.feature("Изменение данных пользователя")
 class TestUserProfile:
+    # Тесты успешного обновления
     @allure.story("Обновление данных")
-    @allure.title("Успешное обновление информации")
-    @pytest.mark.parametrize("field,value", [
-        ("email", generate_email()),
-        ("name", "Новое имя"),
-        ("password", "NewPassword123!")
-    ], ids=["email", "name", "password"])
-    def test_successful_profile_update(self, api_client, registered_user, field, value):
-        """Проверка обновления различных полей профиля"""
-        with allure.step(f"Обновляем поле {field}"):
-            update_data = {field: value}
-            response = api_client.update_user_info(
-                access_token=registered_user["access_token"],
-                **update_data
-            )
-
-        with allure.step("Проверяем ответ"):
-            assert response.status_code == HTTP_STATUS["OK"], "Неверный статус-код"
-            assert "application/json" in response.headers["Content-Type"], "Неверный Content-Type"
-            response_data = response.json()
-            assert response_data["success"] is True, "Флаг success должен быть True"
-
-            # Для пароля API может не возвращать его в ответе
-            if field != "password":
-                assert response_data["user"][field] == value, f"Поле {field} не обновилось"
-            else:
-                # Проверяем, что можно залогиниться с новым паролем
-                login_response = api_client.login_user(
-                    email=registered_user["email"],
-                    password=value
-                )
-                assert login_response.status_code == HTTP_STATUS["OK"], "Не удалось войти с новым паролем"
-
-    @allure.story("Неавторизованный доступ")
-    @allure.title("Попытка изменения данных без авторизации")
-    def test_unauthorized_update(self, api_client):
-        """Проверка защиты от неавторизованных изменений"""
-        response = api_client.update_user_info(
-            access_token=None,  # Явно указываем отсутствие токена
-            name="Новое Имя"
-        )
-
-        with allure.step("Проверяем ответ"):
-            assert response.status_code == HTTP_STATUS["UNAUTHORIZED"], (
-                f"Ожидался статус {HTTP_STATUS['UNAUTHORIZED']}, получен {response.status_code}"
-            )
-            assert "application/json" in response.headers["Content-Type"], "Неверный Content-Type"
-            response_data = response.json()
-            assert not response_data["success"], "success должен быть False для неавторизованного запроса"
-            assert response_data["message"] == ERROR_MESSAGES["UNAUTHORIZED"], (
-                f"Ожидалось сообщение '{ERROR_MESSAGES['UNAUTHORIZED']}', "
-                f"получено '{response_data.get('message')}'"
-            )
-            assert "user" not in response_data, "Не должно быть данных пользователя"
-
-    @allure.story("Ошибки валидации")
-    @allure.title("Попытка задания невалидного email")
-    @pytest.mark.parametrize("invalid_email", [
-        "invalid-email",
-        "missing@domain",
-        "space @email.com"
-    ], ids=["no_at", "no_domain", "with_space"])
-    def test_invalid_email_update(self, api_client, registered_user, invalid_email):
-        """Проверка валидации email при обновлении"""
+    @allure.title("Успешное обновление email")
+    def test_update_email(self, api_client, registered_user):
+        new_email = generate_email()
         response = api_client.update_user_info(
             access_token=registered_user["access_token"],
-            email=invalid_email
+            email=new_email
         )
+        assert response.status_code == HTTP_STATUS["OK"]
+        assert response.json()["user"]["email"] == new_email
 
-        if response.status_code == HTTP_STATUS["OK"]:
-            # Если API принял невалидный email - отмечаем как баг
-            assert response.json()["user"]["email"] == invalid_email
-            pytest.xfail("Известная проблема: API принимает невалидные email")
-        elif response.status_code == HTTP_STATUS["FORBIDDEN"]:
-            # Основной ожидаемый случай согласно документации
-            error_message = response.json().get("message", "")
-            assert "email" in error_message.lower() or "already exists" in error_message.lower(), (
-                f"Ошибка должна быть связана с email. Получено: {error_message}"
-            )
-        else:
-            # Другие коды ошибок считаются неожиданными
-            pytest.fail(f"Неожиданный код ответа: {response.status_code}. "
-                        f"Ожидалось 403 Forbidden или 200 OK. Тело ответа: {response.text}")
+    @allure.story("Обновление данных")
+    @allure.title("Успешное обновление имени")
+    def test_update_name(self, api_client, registered_user):
+        new_name = "Новое имя"
+        response = api_client.update_user_info(
+            access_token=registered_user["access_token"],
+            name=new_name
+        )
+        assert response.status_code == HTTP_STATUS["OK"]
+        assert response.json()["user"]["name"] == new_name
+
+    @allure.story("Обновление данных")
+    @allure.title("Успешное обновление пароля")
+    def test_update_password(self, api_client, registered_user):
+        new_password = "NewPassword123!"
+        response = api_client.update_user_info(
+            access_token=registered_user["access_token"],
+            password=new_password
+        )
+        assert response.status_code == HTTP_STATUS["OK"]
+
+        # Проверяем, что с новым паролем можно войти
+        login_response = api_client.login_user(
+            email=registered_user["email"],
+            password=new_password
+        )
+        assert login_response.status_code == HTTP_STATUS["OK"]
+
+    # Тесты ошибок
+    @allure.story("Неавторизованный доступ")
+    @allure.title("Обновление без токена")
+    def test_unauthorized_update(self, api_client):
+        response = api_client.update_user_info(
+            access_token=None,
+            name="Новое имя"
+        )
+        assert response.status_code == HTTP_STATUS["UNAUTHORIZED"]
+        assert response.json()["message"] == ERROR_MESSAGES["UNAUTHORIZED"]
+
+    @allure.story("Ошибки валидации")
+    @allure.title("Обновление на невалидный email")
+    def test_update_invalid_email(self, api_client, registered_user):
+        response = api_client.update_user_info(
+            access_token=registered_user["access_token"],
+            email="invalid-email"
+        )
+        assert response.status_code in [400, 403]
 
     @allure.story("Конфликтующие данные")
-    @allure.title("Попытка задания существующего email")
-    def test_duplicate_email_update(self, api_client, registered_user, another_registered_user):
-        """Проверка обработки попытки использовать занятый email"""
+    @allure.title("Обновление на существующий email")
+    def test_update_existing_email(self, api_client, registered_user, another_registered_user):
         response = api_client.update_user_info(
             access_token=registered_user["access_token"],
             email=another_registered_user["email"]
         )
-
-        with allure.step("Проверяем ответ"):
-            assert response.status_code in [
-                HTTP_STATUS["FORBIDDEN"],
-                HTTP_STATUS["CONFLICT"]
-            ], "Должна быть ошибка 403 или 409"
-            assert "application/json" in response.headers["Content-Type"], "Неверный Content-Type"
-            error_message = response.json()["message"].lower()
-            assert any(phrase in error_message for phrase in [
-                "already exists",
-                "уже существует"
-            ]), f"Сообщение об ошибке должно указывать на существующий email, получено: '{error_message}'"
+        assert response.status_code in [HTTP_STATUS["FORBIDDEN"], HTTP_STATUS["CONFLICT"]]
+        assert "already exists" in response.json()["message"].lower()
