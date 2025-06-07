@@ -1,3 +1,0 @@
-2025-06-08 00:49:02,248 - helpers.api_client - INFO - Request: GET https://stellarburgers.nomoreparties.site/api/orders
-2025-06-08 00:49:02,417 - helpers.api_client - INFO - Response status: 401
-2025-06-08 00:49:02,417 - helpers.api_client - INFO - Response body: {"success":false,"message":"You should be authorised"}

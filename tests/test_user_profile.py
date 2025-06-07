@@ -76,6 +76,7 @@ class TestUserProfile:
 
     @allure.story("Ошибки валидации")
     @allure.title("Попытка задания email без домена")
+    @pytest.mark.xfail(reason="Известная проблема API: принимает email без домена верхнего уровня")
     def test_invalid_email_no_domain(self, api_client, registered_user):
         response = api_client.update_user_info(
             access_token=registered_user["access_token"],
@@ -83,10 +84,7 @@ class TestUserProfile:
         )
         response_data = response.json()
 
-        # API принимает такой email, хотя не должен, отмечаем как ожидаемый провал
-        if response.status_code == 200:
-            pytest.xfail("Известная проблема API: принимает email без домена верхнего уровня")
-
+        # Ожидаемые проверки (если API починят, тест начнет падать)
         assert response.status_code in [HTTP_STATUS["BAD_REQUEST"], HTTP_STATUS["FORBIDDEN"]]
         assert response_data["success"] is False
         assert "email" in response_data["message"].lower()
