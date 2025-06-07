@@ -2,7 +2,7 @@
 
 import random
 import string
-import time
+import uuid
 
 
 def generate_email():
@@ -20,9 +20,18 @@ def generate_user_data():
     }
 
 def generate_unique_user():
-    timestamp = int(time.time())
+    """Новая версия, согласованная с фикстурами"""
+    uid = uuid.uuid4().hex[:8]
     return {
-        "email": f"user{timestamp}@test.com",
-        "password": f"Password{timestamp}",
-        "name": f"User{timestamp}"
+        "email": f"user_{uid}@test.com",
+        "password": f"Password_{uid}",
+        "name": f"User_{uid}"
     }
+
+def remove_field(data: dict, field: str) -> dict:
+    """Удаляет указанное поле из словаря"""
+    return {k: v for k, v in data.items() if k != field}
+
+def check_error_message(message: str, phrases: list) -> bool:
+    """Проверяет наличие фраз в сообщении об ошибке"""
+    return any(phrase in message.lower() for phrase in phrases)

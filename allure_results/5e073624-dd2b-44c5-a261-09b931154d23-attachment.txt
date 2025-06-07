@@ -1,4 +1,0 @@
-2025-05-30 01:14:41,652 - helpers.api_client - INFO - Request: PATCH https://stellarburgers.nomoreparties.site/api/auth/user
-2025-05-30 01:14:41,653 - helpers.api_client - INFO - Request body: {'name': 'Новое имя'}
-2025-05-30 01:14:41,824 - helpers.api_client - INFO - Response status: 401
-2025-05-30 01:14:41,824 - helpers.api_client - INFO - Response body: {"success":false,"message":"You should be authorised"}

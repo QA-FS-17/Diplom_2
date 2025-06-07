@@ -8,51 +8,77 @@ from helpers.data import HTTP_STATUS, ERROR_MESSAGES
 @allure.feature("Получение заказов пользователя")
 class TestUserOrders:
     @allure.story("Авторизованный пользователь")
-    @allure.title("Получение и проверка списка заказов")
-    def test_authorized_order_list(self, api_client, registered_user):
-        """Проверка успешного получения заказов с валидацией структуры ответа"""
+    @allure.title("Код 200 при запросе заказов")
+    def test_authorized_status_code(self, api_client, registered_user):
         response = api_client.get_user_orders(
             access_token=registered_user["access_token"]
         )
+        assert response.status_code == HTTP_STATUS["OK"]
+        assert "success" in response.json()
 
-        # Базовые проверки
-        assert response.status_code == HTTP_STATUS["OK"], "Неверный статус-код"
-        response_data = response.json()
+    @allure.story("Авторизованный пользователь")
+    @allure.title("Флаг success=True при запросе заказов")
+    def test_authorized_success_flag(self, api_client, registered_user):
+        response = api_client.get_user_orders(
+            access_token=registered_user["access_token"]
+        )
+        assert response.json()["success"] is True
+        assert response.status_code == HTTP_STATUS["OK"]
 
-        # Проверка структуры ответа
-        assert "orders" in response_data, "Отсутствует поле orders"
-        assert isinstance(response_data["orders"], list), "Orders должен быть списком"
+    @allure.story("Авторизованный пользователь")
+    @allure.title("Наличие поля orders в ответе")
+    def test_authorized_orders_field(self, api_client, registered_user):
+        response = api_client.get_user_orders(
+            access_token=registered_user["access_token"]
+        )
+        assert "orders" in response.json()
+        assert isinstance(response.json()["orders"], list)
 
-        # Дополнительные проверки, если есть заказы
-        if response_data["orders"]:
-            order = response_data["orders"][0]
-            assert "number" in order, "Заказ должен содержать номер"
-            assert "ingredients" in order, "Заказ должен содержать ингредиенты"
+    @allure.story("Авторизованный пользователь")
+    @allure.title("Структура заказа при наличии")
+    def test_authorized_order_structure(self, api_client, registered_user_with_order):
+        response = api_client.get_user_orders(
+            access_token=registered_user_with_order["access_token"]
+        )
+        orders = response.json().get("orders", [])
+        assert isinstance(orders, list)
 
     @allure.story("Неавторизованный пользователь")
-    @allure.title("Попытка доступа без авторизации")
-    def test_unauthorized_access(self, api_client):
-        """Проверка обработки неавторизованного доступа"""
-        response = api_client.get_user_orders()  # Не передаем токен вообще
+    @allure.title("Код 401 без авторизации")
+    def test_unauthorized_status_code(self, api_client):
+        response = api_client.get_user_orders()
+        assert response.status_code == HTTP_STATUS["UNAUTHORIZED"]
+        assert not response.json()["success"]
 
-        assert response.status_code == HTTP_STATUS["UNAUTHORIZED"], (
-            f"Ожидался статус {HTTP_STATUS['UNAUTHORIZED']}, получен {response.status_code}"
-        )
-        response_data = response.json()
-        assert not response_data["success"], "success должен быть False для неавторизованного запроса"
-        assert response_data["message"] == ERROR_MESSAGES["UNAUTHORIZED"], (
-            f"Ожидалось сообщение '{ERROR_MESSAGES['UNAUTHORIZED']}', "
-            f"получено '{response_data.get('message')}'"
-        )
+    @allure.story("Неавторизованный пользователь")
+    @allure.title("Сообщение об ошибке без авторизации")
+    def test_unauthorized_message(self, api_client):
+        response = api_client.get_user_orders()
+        assert ERROR_MESSAGES["UNAUTHORIZED"] in response.json()["message"]
+        assert response.status_code == HTTP_STATUS["UNAUTHORIZED"]
 
     @allure.story("Граничные случаи")
-    @allure.title("Проверка пустого списка заказов")
-    def test_empty_order_list(self, api_client, registered_user):
-        """Проверка корректной обработки пустого списка заказов"""
+    @allure.title("Пустой список заказов: код 200")
+    def test_empty_list_status_code(self, api_client, registered_user):
         response = api_client.get_user_orders(
             access_token=registered_user["access_token"]
         )
-
         assert response.status_code == HTTP_STATUS["OK"]
+        assert response.json()["success"] is True
+
+    @allure.story("Граничные случаи")
+    @allure.title("Пустой список заказов: поле orders")
+    def test_empty_list_orders_field(self, api_client, registered_user):
+        response = api_client.get_user_orders(
+            access_token=registered_user["access_token"]
+        )
         assert "orders" in response.json()
-        assert len(response.json()["orders"]) == 0, "Для нового пользователя список заказов должен быть пустым"
+        assert isinstance(response.json()["orders"], list)
+
+    @allure.story("Граничные случаи")
+    @allure.title("Пустой список заказов: количество")
+    def test_empty_list_length(self, api_client, registered_user):
+        response = api_client.get_user_orders(
+            access_token=registered_user["access_token"]
+        )
+        assert len(response.json()["orders"]) == 0

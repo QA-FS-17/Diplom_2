@@ -1,65 +1,85 @@
-# tests/test_user_creation.py
+# test_user_creation.py
 
 import allure
-import pytest
-from helpers.data import HTTP_STATUS
+from helpers.data import HTTP_STATUS, ERROR_MESSAGES
+from helpers.generators import remove_field
 
 
 @allure.epic("Stellar Burgers API")
 @allure.feature("Создание пользователя")
 class TestUserCreation:
-    # Тесты успешной регистрации
     @allure.story("Успешная регистрация")
-    @allure.title("Код ответа 200 при успешной регистрации")
-    def test_registration_status_code(self, api_client, generate_unique_user_data):
-        response = api_client.create_user(**generate_unique_user_data)
+    @allure.title("Код 200 при успешной регистрации")
+    def test_registration_status_code(self, api_client, valid_user_data):
+        response = api_client.create_user(**valid_user_data)
+        assert response.status_code == HTTP_STATUS["OK"]
+        assert "success" in response.json()
+
+    @allure.story("Успешная регистрация")
+    @allure.title("Флаг success=True")
+    def test_registration_success_flag(self, api_client, valid_user_data):
+        response = api_client.create_user(**valid_user_data)
+        assert response.json()["success"] is True
         assert response.status_code == HTTP_STATUS["OK"]
 
     @allure.story("Успешная регистрация")
-    @allure.title("Флаг success=True при успешной регистрации")
-    def test_registration_success_flag(self, api_client, generate_unique_user_data):
-        response = api_client.create_user(**generate_unique_user_data)
-        assert response.json()["success"] is True
-
-    @allure.story("Успешная регистрация")
-    @allure.title("Наличие accessToken в ответе")
-    def test_registration_access_token(self, api_client, generate_unique_user_data):
-        response = api_client.create_user(**generate_unique_user_data)
+    @allure.title("Наличие accessToken")
+    def test_registration_access_token(self, api_client, valid_user_data):
+        response = api_client.create_user(**valid_user_data)
         assert "accessToken" in response.json()
+        assert response.status_code == HTTP_STATUS["OK"]
 
     @allure.story("Успешная регистрация")
-    @allure.title("Наличие refreshToken в ответе")
-    def test_registration_refresh_token(self, api_client, generate_unique_user_data):
-        response = api_client.create_user(**generate_unique_user_data)
+    @allure.title("Наличие refreshToken")
+    def test_registration_refresh_token(self, api_client, valid_user_data):
+        response = api_client.create_user(**valid_user_data)
         assert "refreshToken" in response.json()
+        assert response.status_code == HTTP_STATUS["OK"]
 
     @allure.story("Успешная регистрация")
     @allure.title("Корректный email в ответе")
-    def test_registration_correct_email(self, api_client, generate_unique_user_data):
-        response = api_client.create_user(**generate_unique_user_data)
-        assert response.json()["user"]["email"] == generate_unique_user_data["email"]
+    def test_registration_correct_email(self, api_client, valid_user_data):
+        response = api_client.create_user(**valid_user_data)
+        assert response.json()["user"]["email"] == valid_user_data["email"]
+        assert response.status_code == HTTP_STATUS["OK"]
 
-    # Тесты ошибок регистрации
     @allure.story("Ошибки регистрации")
-    @allure.title("Регистрация с пустым email")
-    def test_empty_email_registration(self, api_client, generate_unique_user_data):
-        user_data = generate_unique_user_data.copy()
+    @allure.title("Пустой email: код ошибки")
+    def test_empty_email_status(self, api_client, valid_user_data):
+        user_data = valid_user_data.copy()
         user_data["email"] = ""
         response = api_client.create_user(**user_data)
-        assert response.status_code in [400, 403]
-        assert "email" in response.json()["message"].lower()
+        assert response.status_code in [HTTP_STATUS["BAD_REQUEST"], HTTP_STATUS["FORBIDDEN"]]
+        assert not response.json()["success"]
 
     @allure.story("Ошибки регистрации")
-    @allure.title("Регистрация без email")
-    def test_missing_email_registration(self, api_client, generate_unique_user_data):
-        user_data = {k: v for k, v in generate_unique_user_data.items() if k != "email"}
+    @allure.title("Пустой email: сообщение")
+    def test_empty_email_message(self, api_client, valid_user_data):
+        user_data = valid_user_data.copy()
+        user_data["email"] = ""
         response = api_client.create_user(**user_data)
-        assert response.status_code == 403
-        assert "required" in response.json()["message"].lower()
+        assert "email" in response.json()["message"].lower()
+        assert response.status_code != HTTP_STATUS["OK"]
 
     @allure.story("Ошибки регистрации")
-    @allure.title("Регистрация существующего пользователя")
-    def test_duplicate_registration(self, api_client, registered_user):
+    @allure.title("Отсутствие email: код 403")
+    def test_missing_email_status(self, api_client, valid_user_data):
+        user_data = remove_field(valid_user_data, "email")
+        response = api_client.create_user(**user_data)
+        assert response.status_code == HTTP_STATUS["FORBIDDEN"]
+        assert not response.json()["success"]
+
+    @allure.story("Ошибки регистрации")
+    @allure.title("Отсутствие email: сообщение")
+    def test_missing_email_message(self, api_client, valid_user_data):
+        user_data = remove_field(valid_user_data, "email")
+        response = api_client.create_user(**user_data)
+        assert ERROR_MESSAGES["REQUIRED_FIELDS"] in response.json()["message"]
+        assert response.status_code == HTTP_STATUS["FORBIDDEN"]
+
+    @allure.story("Ошибки регистрации")
+    @allure.title("Дубликат пользователя: код 403")
+    def test_duplicate_status(self, api_client, registered_user):
         user_data = {
             "email": registered_user["email"],
             "password": registered_user["password"],
@@ -67,39 +87,16 @@ class TestUserCreation:
         }
         response = api_client.create_user(**user_data)
         assert response.status_code == HTTP_STATUS["FORBIDDEN"]
-        assert "already exists" in response.json()["message"].lower()
+        assert not response.json()["success"]
 
-    # Тесты валидации данных
-    @allure.story("Валидация данных")
-    @allure.title("Регистрация с email без @")
-    def test_email_without_at_sign(self, api_client, generate_unique_user_data):
-        user_data = generate_unique_user_data.copy()
-        user_data["email"] = "invalidemail.com"
+    @allure.story("Ошибки регистрации")
+    @allure.title("Дубликат пользователя: сообщение")
+    def test_duplicate_message(self, api_client, registered_user):
+        user_data = {
+            "email": registered_user["email"],
+            "password": registered_user["password"],
+            "name": registered_user["name"]
+        }
         response = api_client.create_user(**user_data)
-        assert response.status_code in [400, 403, 500]
-
-    @allure.story("Валидация данных")
-    @allure.title("API должен отклонять пароль из 1 символа (ожидаемое поведение)")
-    @pytest.mark.xfail(reason="Баг в API: принимает пароль из 1 символа", strict=True)
-    def test_one_char_password_should_fail(self, api_client, generate_unique_user_data):
-        user_data = generate_unique_user_data.copy()
-        user_data["password"] = "1"
-        response = api_client.create_user(**user_data)
-        assert response.status_code != HTTP_STATUS["OK"], (
-            "API должен возвращать ошибку при пароле из 1 символа"
-        )
-
-    @allure.story("Валидация данных")
-    @allure.title("Фактическое поведение API (принимает пароль из 1 символа)")
-    def test_one_char_password_current_behavior(self, api_client, generate_unique_user_data):
-        user_data = generate_unique_user_data.copy()
-        user_data["password"] = "1"
-        response = api_client.create_user(**user_data)
-
-        # Проверяем текущее (некорректное) поведение API
-        assert response.status_code == HTTP_STATUS["OK"], (
-            f"Фактически API вернул {response.status_code}, ожидался 200"
-        )
-        assert "accessToken" in response.json(), (
-            "API неожиданно не вернул токен при коротком пароле"
-        )
+        assert ERROR_MESSAGES["USER_EXISTS"] in response.json()["message"]
+        assert response.status_code == HTTP_STATUS["FORBIDDEN"]

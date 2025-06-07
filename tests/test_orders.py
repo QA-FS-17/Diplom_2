@@ -1,3 +1,5 @@
+# test_orders.py
+
 import allure
 import pytest
 from helpers.data import HTTP_STATUS, ERROR_MESSAGES
@@ -8,10 +10,10 @@ from helpers.data import HTTP_STATUS, ERROR_MESSAGES
 class TestOrderCreation:
     @allure.story("Авторизованный пользователь")
     @allure.title("Успешное создание заказа")
-    def test_successful_order_creation(self, api_client, registered_user, get_valid_ingredients):
+    def test_successful_order_creation(self, api_client, registered_user, valid_ingredients):
         ingredients = [
-            get_valid_ingredients["bun"],
-            get_valid_ingredients["main"]
+            valid_ingredients["bun"],
+            valid_ingredients["main"]
         ]
 
         response = api_client.create_order(
@@ -20,7 +22,11 @@ class TestOrderCreation:
         )
 
         assert response.status_code == HTTP_STATUS["OK"]
-        assert response.json()["success"] is True
+        response_data = response.json()
+        assert response_data["success"] is True
+        assert "name" in response_data
+        assert "order" in response_data
+        assert "number" in response_data["order"]
 
     @allure.story("Авторизованный пользователь")
     @allure.title("Создание заказа без ингредиентов")
@@ -31,34 +37,40 @@ class TestOrderCreation:
         )
 
         assert response.status_code == HTTP_STATUS["BAD_REQUEST"]
-        assert ERROR_MESSAGES["NO_INGREDIENTS"] in response.json()["message"]
+        response_data = response.json()
+        assert response_data["success"] is False
+        assert ERROR_MESSAGES["NO_INGREDIENTS"] in response_data["message"]
 
     @allure.story("Неавторизованный пользователь")
     @allure.title("API ошибочно разрешает неавторизованные заказы (должен возвращать 401)")
     @pytest.mark.xfail(reason="Баг в API: неавторизованные заказы разрешены", strict=True)
-    def test_unauthorized_access_should_fail(self, api_client, get_valid_ingredients):
+    def test_unauthorized_access_should_fail(self, api_client, valid_ingredients):
         response = api_client.create_order(
-            ingredients=[get_valid_ingredients["bun"]]
+            ingredients=[valid_ingredients["bun"]]
         )
         assert response.status_code == HTTP_STATUS["UNAUTHORIZED"]
+        response_data = response.json()
+        assert response_data["success"] is False
 
     @allure.story("Неавторизованный пользователь")
     @allure.title("Фактическое поведение API (разрешает неавторизованные заказы)")
-    def test_unauthorized_access_current(self, api_client, get_valid_ingredients):
+    def test_unauthorized_access_current(self, api_client, valid_ingredients):
         response = api_client.create_order(
-            ingredients=[get_valid_ingredients["bun"]]
+            ingredients=[valid_ingredients["bun"]]
         )
         assert response.status_code == HTTP_STATUS["OK"]
-        assert response.json()["success"] is True
+        response_data = response.json()
+        assert response_data["success"] is True
 
     @allure.story("Неавторизованный пользователь")
     @allure.title("API ошибочно возвращает success=True (должен быть False)")
     @pytest.mark.xfail(reason="Баг в API: неверный флаг success", strict=True)
-    def test_unauthorized_success_flag_should_fail(self, api_client, get_valid_ingredients):
+    def test_unauthorized_success_flag_should_fail(self, api_client, valid_ingredients):
         response = api_client.create_order(
-            ingredients=[get_valid_ingredients["bun"]]
+            ingredients=[valid_ingredients["bun"]]
         )
-        assert not response.json()["success"]
+        response_data = response.json()
+        assert not response_data["success"]
 
     @allure.story("Невалидные данные")
     @allure.title("Создание заказа с несуществующими ингредиентами")
@@ -74,11 +86,11 @@ class TestOrderCreation:
 
     @allure.story("Авторизованный пользователь")
     @allure.title("Создание заказа с полным набором ингредиентов")
-    def test_full_ingredients_order(self, api_client, registered_user, get_valid_ingredients):
+    def test_full_ingredients_order(self, api_client, registered_user, valid_ingredients):
         ingredients = [
-            get_valid_ingredients["bun"],
-            get_valid_ingredients["main"],
-            get_valid_ingredients["sauce"]
+            valid_ingredients["bun"],
+            valid_ingredients["main"],
+            valid_ingredients["sauce"]
         ]
 
         response = api_client.create_order(

@@ -1,4 +1,0 @@
-[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
-[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_704831e8@test.com', 'password': 'Password_704831e8', 'name': 'User_704831e8'}
-[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
-[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"user":{"email":"user_704831e8@test.com","name":"User_704831e8"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzhkYzNhOWVkMjgwMDAxYjYwMjdlOCIsImlhdCI6MTc0ODU1Njg1OCwiZXhwIjoxNzQ4NTU4MDU4fQ.s2O5z_ZV8rogO3xFzqUWKfOfwpHjcuOr80IF-78R3Cs","refreshToken":"646b0d3164dfab81951b95924cb9858ae6365c654cb6edf63394cf00b2e9db46ebdd60518d7ad298"}
