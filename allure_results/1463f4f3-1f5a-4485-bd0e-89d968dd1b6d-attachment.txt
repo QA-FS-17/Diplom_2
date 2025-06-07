@@ -1,0 +1,11 @@
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_69056978@test.com', 'password': 'Password_7436403c', 'name': 'User_e4e32075'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"user":{"email":"user_69056978@test.com","name":"User_e4e32075"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDRiM2I2OWVkMjgwMDAxYjYxMTQ1NyIsImlhdCI6MTc0OTMzMjkxOCwiZXhwIjoxNzQ5MzM0MTE4fQ.OSwciGs7aziaPNUNg7W36QQogZyQycKEfhjF9RfD-K0","refreshToken":"99179f8c2d00e66ef4657486a72e6faab87c2cb0d01795358037213107cb81a76e9d6f5468489014"}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/login
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_69056978@test.com', 'password': 'Password_7436403c'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDRiM2I2OWVkMjgwMDAxYjYxMTQ1NyIsImlhdCI6MTc0OTMzMjkxOCwiZXhwIjoxNzQ5MzM0MTE4fQ.OSwciGs7aziaPNUNg7W36QQogZyQycKEfhjF9RfD-K0","refreshToken":"0fd2e6c3f1dcf2c4f04e4d09efc7a341d73edbb7c003a1e97012808de188806afe3e5db09804f884","user":{"email":"user_69056978@test.com","name":"User_e4e32075"}}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 202
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"message":"User successfully removed"}

@@ -1,0 +1,11 @@
+2025-06-08 00:48:49,757 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-06-08 00:48:49,758 - helpers.api_client - INFO - Request body: {'email': 'user_9f92d1b0@test.com', 'password': 'Password_1f72824e', 'name': 'User_04f40faf'}
+2025-06-08 00:48:50,033 - helpers.api_client - INFO - Response status: 200
+2025-06-08 00:48:50,033 - helpers.api_client - INFO - Response body: {"success":true,"user":{"email":"user_9f92d1b0@test.com","name":"User_04f40faf"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDRiM2JlOWVkMjgwMDAxYjYxMTQ2NyIsImlhdCI6MTc0OTMzMjkyNiwiZXhwIjoxNzQ5MzM0MTI2fQ.oOLtlSf2sVEZZkowwD-gZh_gAweo6HgNaGSHxfBT938","refreshToken":"c37a6b96d966c8434a820562c2461bc2ef8c5f91160f6e6effe487cb7ece7f3610005cf187ea422b"}
+2025-06-08 00:48:50,035 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/login
+2025-06-08 00:48:50,036 - helpers.api_client - INFO - Request body: {'email': 'nonexistent@example.com', 'password': 'Password_1f72824e'}
+2025-06-08 00:48:50,199 - helpers.api_client - INFO - Response status: 401
+2025-06-08 00:48:50,199 - helpers.api_client - INFO - Response body: {"success":false,"message":"email or password are incorrect"}
+2025-06-08 00:48:50,202 - helpers.api_client - INFO - Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+2025-06-08 00:48:50,965 - helpers.api_client - INFO - Response status: 202
+2025-06-08 00:48:50,966 - helpers.api_client - INFO - Response body: {"success":true,"message":"User successfully removed"}

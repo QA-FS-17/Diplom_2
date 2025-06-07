@@ -1,0 +1,11 @@
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_ceb156ac@test.com', 'password': 'Password_44e3c0dc', 'name': 'User_0986d711'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"user":{"email":"user_ceb156ac@test.com","name":"User_0986d711"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDRiM2IzOWVkMjgwMDAxYjYxMTQ1MyIsImlhdCI6MTc0OTMzMjkxNSwiZXhwIjoxNzQ5MzM0MTE1fQ.g8aByd-Ft1RqDMVxzY-YXpZbzqpY8KwcWcfUpBasya4","refreshToken":"5ff989c33e1290fc7146d73e8d200d37dc597640dc8cf6de109f7883e0f31014b082258159f1b7a0"}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_ceb156ac@test.com', 'password': 'Password_44e3c0dc', 'name': 'User_0986d711'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 403
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":false,"message":"User already exists"}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 202
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"message":"User successfully removed"}
