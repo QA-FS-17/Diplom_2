@@ -1,0 +1,15 @@
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_3c7ede6a@test.com', 'password': 'Password_0d5e03c3', 'name': 'User_6d3c8611'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"user":{"email":"user_3c7ede6a@test.com","name":"User_6d3c8611"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDg1NDliOWVkMjgwMDAxYjYxNjg4NSIsImlhdCI6MTc0OTU3MDcxNSwiZXhwIjoxNzQ5NTcxOTE1fQ.uhy5c6arqqwmTKTtDtr_LzrZZGHZsYmkeUS6jn4Ssmo","refreshToken":"62756343cebc40b761a788454081a98dba8400104a5011ffea797121e3db5f187e46d56c255dcdf1"}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: PATCH https://stellarburgers.nomoreparties.site/api/auth/user
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'password': 'NewPassword123!'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"user":{"email":"user_3c7ede6a@test.com","name":"User_6d3c8611"}}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/login
+[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'email': 'user_3c7ede6a@test.com', 'password': 'NewPassword123!'}
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 200
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDg1NDliOWVkMjgwMDAxYjYxNjg4NSIsImlhdCI6MTc0OTU3MDcxNiwiZXhwIjoxNzQ5NTcxOTE2fQ.S_lenymIjCLlwLeJRbkpTpgVNmLRMLowF0zGxGLtqxw","refreshToken":"63e2e565c820c3c15d9422d997abca45b11c387a2554b3c26b876310e70840533b2a070a2a3b7bca","user":{"email":"user_3c7ede6a@test.com","name":"User_6d3c8611"}}
+[32mINFO    [0m helpers.api_client:api_client.py:38 Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 202
+[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":true,"message":"User successfully removed"}
