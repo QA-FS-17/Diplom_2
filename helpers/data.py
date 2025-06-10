@@ -20,7 +20,7 @@ HTTP_STATUS = {
     "FORBIDDEN": 403,
     "NOT_FOUND": 404,
     "CONFLICT": 409,
-    "SERVER_ERROR": 500
+    "Internal Server Error": 500
 }
 
 # Сообщения об ошибках

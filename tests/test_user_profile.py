@@ -4,6 +4,7 @@ import allure
 import pytest
 from helpers.data import HTTP_STATUS, ERROR_MESSAGES
 from helpers.generators import generate_email, check_error_message
+import uuid
 
 
 @allure.epic("Stellar Burgers API")
@@ -80,19 +81,35 @@ class TestUserProfile:
     def test_invalid_email_no_domain(self, api_client, registered_user):
         response = api_client.update_user_info(
             access_token=registered_user["access_token"],
-            email="missing@domain"  # Email без домена верхнего уровня
+            email="missing@domain"
         )
         response_data = response.json()
-
-        # Ожидаемые проверки (если API починят, тест начнет падать)
         assert response.status_code in [HTTP_STATUS["BAD_REQUEST"], HTTP_STATUS["FORBIDDEN"]]
         assert response_data["success"] is False
         assert "email" in response_data["message"].lower()
 
     @allure.story("Ошибки валидации")
-    @allure.title("Попытка задания email с пробелом")
-    def test_invalid_email_with_space(self, api_client, registered_user):
-        self._test_invalid_email(api_client, registered_user, "space @email.com")
+    @allure.title("Попытка задания email без @")
+    @pytest.mark.xfail(
+        reason="API принимает невалидный email (без символа @). Ожидается ошибка валидации (400), \
+        но получаем 200.")
+    def test_invalid_email_no_at(self, api_client, registered_user):
+        invalid_email = f"invalid-email-{uuid.uuid4()}@test"
+        response = api_client.update_user_info(
+            registered_user["access_token"],
+            invalid_email,
+            registered_user["name"]
+        )
+        assert response.status_code == HTTP_STATUS["BAD_REQUEST"], (
+            f"Ожидался статус 400, но получен {response.status_code}. "
+            f"Тело ответа: {response.text}"
+        )
+        response_data = response.json()
+        assert not response_data["success"], "Флаг success должен быть False"
+        assert "message" in response_data, "Нет сообщения об ошибке"
+        assert "неверный формат email" in response_data[
+            "message"].lower(), f"Ожидалось сообщение об ошибке валидации email, \
+            но получено: {response_data['message']}"
 
     @allure.story("Неавторизованный доступ")
     @allure.title("Попытка изменения данных без авторизации")

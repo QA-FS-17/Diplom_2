@@ -31,6 +31,7 @@ class TestUserOrders:
         response = api_client.get_user_orders(
             access_token=registered_user["access_token"]
         )
+        assert response.status_code == HTTP_STATUS["OK"]
         assert "orders" in response.json()
         assert isinstance(response.json()["orders"], list)
 
@@ -40,6 +41,7 @@ class TestUserOrders:
         response = api_client.get_user_orders(
             access_token=registered_user_with_order["access_token"]
         )
+        assert response.status_code == HTTP_STATUS["OK"]
         orders = response.json().get("orders", [])
         assert isinstance(orders, list)
 
@@ -72,6 +74,7 @@ class TestUserOrders:
         response = api_client.get_user_orders(
             access_token=registered_user["access_token"]
         )
+        assert response.status_code == HTTP_STATUS["OK"]
         assert "orders" in response.json()
         assert isinstance(response.json()["orders"], list)
 
@@ -81,4 +84,5 @@ class TestUserOrders:
         response = api_client.get_user_orders(
             access_token=registered_user["access_token"]
         )
+        assert response.status_code == HTTP_STATUS["OK"]
         assert len(response.json()["orders"]) == 0

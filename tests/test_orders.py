@@ -69,6 +69,7 @@ class TestOrderCreation:
         response = api_client.create_order(
             ingredients=[valid_ingredients["bun"]]
         )
+        assert response.status_code == HTTP_STATUS["OK"]
         response_data = response.json()
         assert not response_data["success"]
 
@@ -80,7 +81,7 @@ class TestOrderCreation:
             access_token=registered_user["access_token"]
         )
 
-        assert response.status_code == HTTP_STATUS["SERVER_ERROR"]
+        assert response.status_code == HTTP_STATUS["Internal Server Error"]
         assert "text/html" in response.headers.get("Content-Type", "")
         assert "Internal Server Error" in response.text
 
