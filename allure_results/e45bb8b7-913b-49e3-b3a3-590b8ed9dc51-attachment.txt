@@ -1,4 +1,0 @@
-[32mINFO    [0m helpers.api_client:api_client.py:38 Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
-[32mINFO    [0m helpers.api_client:api_client.py:40 Request body: {'password': 'Password_f8a5961b', 'name': 'User_5eb24de0'}
-[32mINFO    [0m helpers.api_client:api_client.py:44 Response status: 403
-[32mINFO    [0m helpers.api_client:api_client.py:45 Response body: {"success":false,"message":"Email, password and name are required fields"}

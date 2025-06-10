@@ -1,0 +1,11 @@
+2025-06-10 18:39:47,979 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-06-10 18:39:47,979 - helpers.api_client - INFO - Request body: {'email': 'user_8e6fc1b6@test.com', 'password': 'Password_6f146a9d', 'name': 'User_7e2466ed'}
+2025-06-10 18:39:48,268 - helpers.api_client - INFO - Response status: 200
+2025-06-10 18:39:48,269 - helpers.api_client - INFO - Response body: {"success":true,"user":{"email":"user_8e6fc1b6@test.com","name":"User_7e2466ed"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDg1MWJkOWVkMjgwMDAxYjYxNjdhMiIsImlhdCI6MTc0OTU2OTk4MSwiZXhwIjoxNzQ5NTcxMTgxfQ.51KPi13xuUtG7rQ_Buiwlejqr5XAczH1wdpl2rluITw","refreshToken":"9873ac5046432b5c9541674b72bae06ff447e4c5bf42127892764dbc3e2d3d84b8342ec63a3a436a"}
+2025-06-10 18:39:48,270 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-06-10 18:39:48,270 - helpers.api_client - INFO - Request body: {'email': 'user_8e6fc1b6@test.com', 'password': 'Password_6f146a9d', 'name': 'User_7e2466ed'}
+2025-06-10 18:39:48,440 - helpers.api_client - INFO - Response status: 403
+2025-06-10 18:39:48,440 - helpers.api_client - INFO - Response body: {"success":false,"message":"User already exists"}
+2025-06-10 18:39:48,443 - helpers.api_client - INFO - Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+2025-06-10 18:39:49,186 - helpers.api_client - INFO - Response status: 202
+2025-06-10 18:39:49,187 - helpers.api_client - INFO - Response body: {"success":true,"message":"User successfully removed"}

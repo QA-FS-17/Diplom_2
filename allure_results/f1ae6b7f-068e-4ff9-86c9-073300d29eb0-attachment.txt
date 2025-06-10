@@ -1,0 +1,4 @@
+2025-06-10 18:39:46,154 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-06-10 18:39:46,154 - helpers.api_client - INFO - Request body: {'email': '', 'password': 'Password_cadee719', 'name': 'User_c63fae6d'}
+2025-06-10 18:39:46,313 - helpers.api_client - INFO - Response status: 403
+2025-06-10 18:39:46,314 - helpers.api_client - INFO - Response body: {"success":false,"message":"Email, password and name are required fields"}

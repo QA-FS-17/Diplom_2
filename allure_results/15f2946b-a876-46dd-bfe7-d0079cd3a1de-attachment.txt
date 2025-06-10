@@ -1,0 +1,4 @@
+2025-06-10 18:40:00,116 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/login
+2025-06-10 18:40:00,117 - helpers.api_client - INFO - Request body: {'email': 'nonexistent@example.com', 'password': 'invalid_password'}
+2025-06-10 18:40:00,288 - helpers.api_client - INFO - Response status: 401
+2025-06-10 18:40:00,288 - helpers.api_client - INFO - Response body: {"success":false,"message":"email or password are incorrect"}
