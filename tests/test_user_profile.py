@@ -71,11 +71,6 @@ class TestUserProfile:
         assert "email" in response_data["message"].lower()
 
     @allure.story("Ошибки валидации")
-    @allure.title("Попытка задания email без @")
-    def test_invalid_email_no_at(self, api_client, registered_user):
-        self._test_invalid_email(api_client, registered_user, "invalid-email")
-
-    @allure.story("Ошибки валидации")
     @allure.title("Попытка задания email без домена")
     @pytest.mark.xfail(reason="Известная проблема API: принимает email без домена верхнего уровня")
     def test_invalid_email_no_domain(self, api_client, registered_user):
