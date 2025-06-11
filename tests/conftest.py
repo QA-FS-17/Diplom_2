@@ -1,8 +1,9 @@
 # conftest.py
 
 import pytest
-from helpers.api_client import StellarBurgersApi
+import logging
 import uuid
+from helpers.api_client import StellarBurgersApi
 from helpers.data import TestUsers
 
 
@@ -61,11 +62,15 @@ def another_registered_user(api_client):
 
 @pytest.fixture
 def registered_user_with_order(api_client, registered_user, valid_ingredients):
-    """Фикстура создания заказа для пользователя"""
-    api_client.create_order(
+    """Фикстура создания заказа для пользователя с логированием результата"""
+    response = api_client.create_order(
         ingredients=[valid_ingredients["bun"]],
         access_token=registered_user["access_token"]
     )
+    if response.status_code != 200:
+        logging.error(f"Failed to create order: status {response.status_code}, response: {response.text}")
+    else:
+        logging.info("Order created successfully for registered user")
     return registered_user
 
 @pytest.fixture
