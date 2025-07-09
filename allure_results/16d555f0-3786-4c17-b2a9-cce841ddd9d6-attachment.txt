@@ -1,0 +1,11 @@
+2025-06-10 18:51:21,530 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/auth/register
+2025-06-10 18:51:21,530 - helpers.api_client - INFO - Request body: {'email': 'user_bbdbb477@test.com', 'password': 'Password_fe15f91d', 'name': 'User_cda75d9a'}
+2025-06-10 18:51:21,758 - helpers.api_client - INFO - Response status: 200
+2025-06-10 18:51:21,758 - helpers.api_client - INFO - Response body: {"success":true,"user":{"email":"user_bbdbb477@test.com","name":"User_cda75d9a"},"accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NDg1NDczOWVkMjgwMDAxYjYxNjg0OSIsImlhdCI6MTc0OTU3MDY3NSwiZXhwIjoxNzQ5NTcxODc1fQ.3Amqc2QkkRxvadjfYB1GbzTayP7nXIGmYShxGvwLHyk","refreshToken":"06d37afd1f41df54c87446679a5031976e12bb859209d349ba196fe4587242c314c52488918f904c"}
+2025-06-10 18:51:21,759 - helpers.api_client - INFO - Request: POST https://stellarburgers.nomoreparties.site/api/orders
+2025-06-10 18:51:21,760 - helpers.api_client - INFO - Request body: {'ingredients': []}
+2025-06-10 18:51:21,918 - helpers.api_client - INFO - Response status: 400
+2025-06-10 18:51:21,919 - helpers.api_client - INFO - Response body: {"success":false,"message":"Ingredient ids must be provided"}
+2025-06-10 18:51:21,921 - helpers.api_client - INFO - Request: DELETE https://stellarburgers.nomoreparties.site/api/auth/user
+2025-06-10 18:51:22,641 - helpers.api_client - INFO - Response status: 202
+2025-06-10 18:51:22,642 - helpers.api_client - INFO - Response body: {"success":true,"message":"User successfully removed"}
